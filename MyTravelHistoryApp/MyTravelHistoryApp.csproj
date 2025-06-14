@@ -59,15 +59,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="9.0.70" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Models\" />
-	  <Folder Include="Platforms\iOS\Services\" />
-	  <Folder Include="Services\Interfaces\" />
 	</ItemGroup>
 
 	<ItemGroup>
