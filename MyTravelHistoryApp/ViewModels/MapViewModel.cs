@@ -2,9 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls.Maps;
-using MyTravelHistoryApp.Messages;
 using MyTravelHistoryApp.Models;
-using MyTravelHistoryApp.Services;
 using MyTravelHistoryApp.Services.Interfaces;
 
 namespace MyTravelHistoryApp.ViewModels;
@@ -13,32 +11,68 @@ public partial class MapViewModel : ObservableObject
 {
 
     private readonly ILocationService locationService;
+    private readonly IDBService dbService;
+    private DateTime CurrentTrackStartTime;
+    private DateTime CurrentTrackStopTime;
 
-    public MapViewModel(ILocationService locationService)
+    public MapViewModel(ILocationService locationService, IDBService dbService)
     {
+        StartStopButtonColor = "Green";
         this.locationService = locationService;
-        locationService.OnLocationUpdate = OnLocationUpdate;
+        this.locationService.OnLocationUpdate = OnLocationUpdate;
+        track = new Polyline
+        {
+            StrokeColor = Colors.Blue,
+            StrokeWidth = 5
+        };
+        this.dbService = dbService;
         StartStopButtonText = "Start";
     }
 
-    private void OnLocationUpdate(CustomLocation clocation)
+    private async void OnLocationUpdate(CustomLocation location)
     {
-        Track.Geopath.Add(new Location(clocation.Latitude, clocation.Longitude));
-        WeakReferenceMessenger.Default.Send(new LocationUpdateMessage(clocation));
+        WeakReferenceMessenger.Default.Send(new Location(location.Latitude, location.Longitude));
+        Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+        await dbService.Save(location);
     }
 
     [RelayCommand]
-    public void StartStopRecording()
+    public async void ToggleTracxking()
     {
+        locationService.ToggleStartStopTracking();
+        StartStopButtonText = StartStopButtonText == "Start" ? "Stop" : "Start";
         if (StartStopButtonText == "Start")
         {
-            StartStopButtonText = "Stop";
+            //display an alert to the user asking if we need to save the current track ?
+            CurrentTrackStopTime = DateTime.Now;
+            StartStopButtonColor = "Gray";
+            var result = await Application.Current.MainPage.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
+            if (result)
+            {
+                var track = new Track
+                {
+                    StartTime = CurrentTrackStartTime,
+                    StopTime = CurrentTrackStopTime,
+                    Locations = new List<CustomLocation>()
+                };
+
+                track.Locations = await dbService.GetTrackLocations(CurrentTrackStartTime, CurrentTrackStopTime);
+                await dbService.SaveTrack(track);
+                await dbService.ClearCustomLocationTable();
+            }
+            StartStopButtonColor = "Green";
         }
-        else
+        if (StartStopButtonText == "Stop")
         {
-            StartStopButtonText = "Start";
+            CurrentTrackStartTime = DateTime.Now;
+            StartStopButtonColor = "Red";
         }
-        OnPropertyChanged(nameof(StartStopButtonText));
+    }
+
+    [RelayCommand]
+    private void ShowHistory()
+    {
+
     }
 
     [ObservableProperty]
@@ -47,11 +81,6 @@ public partial class MapViewModel : ObservableObject
     [ObservableProperty]
     private string startStopButtonText;
 
-    partial void OnStartStopButtonTextChanged(string value)
-    {
-        if (value == "Stop")
-            locationService.StartTracking();
-        else
-            locationService.StopTracking();
-    }
+    [ObservableProperty]
+    private string startStopButtonColor;
 }
