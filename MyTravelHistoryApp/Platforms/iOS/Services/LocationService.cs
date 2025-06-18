@@ -7,7 +7,6 @@ public partial class LocationService
 {
 
     public readonly CLLocationManager locationManager;
-    private bool isTracking = false;
 
     public LocationService()
     {
@@ -16,20 +15,17 @@ public partial class LocationService
         locationManager.DesiredAccuracy = CLLocation.AccuracyBestForNavigation;
         locationManager.AllowsBackgroundLocationUpdates = true;
         locationManager.ActivityType = CLActivityType.AutomotiveNavigation;
-        locationManager.LocationsUpdated += (object sender, CLLocationsUpdatedEventArgs e) =>
-            OnLocationUpdate?.Invoke(new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude));
     }
 
-    partial void ToggleStartStopTrackingInternal()
+    partial void StartTrackingInternal()
     {
-        if (!isTracking)
-        {
-            locationManager.StartUpdatingLocation();            
-        }
-        else
-        {
-            locationManager.StopUpdatingLocation();
-        }
-        isTracking = !isTracking;
+        locationManager.LocationsUpdated += (object sender, CLLocationsUpdatedEventArgs e) =>
+            OnLocationUpdate?.Invoke(new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude));
+        locationManager.StartUpdatingLocation();
+    }
+
+    partial void StopTrackingInternal()
+    {
+        locationManager.StopUpdatingLocation();
     }
 }
