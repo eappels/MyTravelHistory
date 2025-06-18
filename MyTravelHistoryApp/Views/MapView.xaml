@@ -11,6 +11,7 @@
                 WidthRequest="100"
                 CornerRadius="50"
                 Grid.Row="1" Grid.RowSpan="1"
-                Command="{Binding StartStopRecordingCommand}"/>
+                Command="{Binding StartStopRecordingCommand}"
+                BackgroundColor="{Binding StartStopButtonColor}"/>
     </Grid>
 </ContentPage>

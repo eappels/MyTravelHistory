@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls.Maps;
 using MyTravelHistoryApp.Messages;
 using MyTravelHistoryApp.Models;
-using MyTravelHistoryApp.Services;
 using MyTravelHistoryApp.Services.Interfaces;
+using System.Diagnostics;
 
 namespace MyTravelHistoryApp.ViewModels;
 
@@ -16,9 +16,15 @@ public partial class MapViewModel : ObservableObject
 
     public MapViewModel(ILocationService locationService)
     {
+        StartStopButtonColor = "Green";
         this.locationService = locationService;
         locationService.OnLocationUpdate = OnLocationUpdate;
         StartStopButtonText = "Start";
+        Track = new Polyline
+        {
+            StrokeColor = Colors.Blue,
+            StrokeWidth = 5
+        };
     }
 
     private void OnLocationUpdate(CustomLocation clocation)
@@ -28,17 +34,24 @@ public partial class MapViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void StartStopRecording()
+    public async void StartStopRecording()
     {
+        StartStopButtonText = StartStopButtonText == "Start" ? "Stop" : "Start";
         if (StartStopButtonText == "Start")
         {
-            StartStopButtonText = "Stop";
+            locationService.StopTracking();
+            var result = await Application.Current.MainPage.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
+            if (result)
+            {
+                Debug.WriteLine($"result = {result}");
+            }
+            StartStopButtonColor = "Green";
         }
         else
         {
-            StartStopButtonText = "Start";
+            locationService.StartTracking();
+            StartStopButtonColor = "Red";
         }
-        OnPropertyChanged(nameof(StartStopButtonText));
     }
 
     [ObservableProperty]
@@ -47,11 +60,6 @@ public partial class MapViewModel : ObservableObject
     [ObservableProperty]
     private string startStopButtonText;
 
-    partial void OnStartStopButtonTextChanged(string value)
-    {
-        if (value == "Stop")
-            locationService.StartTracking();
-        else
-            locationService.StopTracking();
-    }
+    [ObservableProperty]
+    private string startStopButtonColor;
 }
