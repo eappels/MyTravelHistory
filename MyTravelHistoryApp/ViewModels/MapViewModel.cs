@@ -17,6 +17,7 @@ public partial class MapViewModel : ObservableObject
 
     public MapViewModel(ILocationService locationService, IDBService dbService)
     {
+        StartStopButtonEnabed = true;
         StartStopButtonColor = "Green";
         this.locationService = locationService;        
         locationService.OnLocationUpdate = OnLocationUpdate;
@@ -49,16 +50,15 @@ public partial class MapViewModel : ObservableObject
         else
         {
             locationService.StopTracking();
+            StartStopButtonEnabed = false;
             StopTrackingTime = DateTime.Now;
             var result = await Application.Current.MainPage.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
-            if (result)
+            if (result == true)
             {
-                if (result == true)
-                {
 
-                }
             }
             StartStopButtonColor = "Green";
+            StartStopButtonEnabed = true;
         }
     }
 
@@ -70,4 +70,7 @@ public partial class MapViewModel : ObservableObject
 
     [ObservableProperty]
     private string startStopButtonColor;
+
+    [ObservableProperty]
+    private bool startStopButtonEnabed;
 }

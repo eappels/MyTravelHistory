@@ -6,7 +6,8 @@
     <Grid RowDefinitions="*,120">
         <maps:Map x:Name="MyMap"
                   Grid.Row="0" Grid.RowSpan="2"/>
-        <Button Text="{Binding StartStopButtonText}" 
+        <Button Text="{Binding StartStopButtonText}"
+                IsEnabled="{Binding StartStopButtonEnabed}"
                 HeightRequest="100"
                 WidthRequest="100"
                 CornerRadius="50"
