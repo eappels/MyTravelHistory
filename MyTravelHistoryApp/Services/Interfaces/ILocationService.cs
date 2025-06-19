@@ -4,7 +4,7 @@ namespace MyTravelHistoryApp.Services.Interfaces;
 
 public interface ILocationService
 {
-    Action<CustomLocation> OnLocationUpdate { get; set; }
+    Action<Location> OnLocationUpdate { get; set; }
     void StartTracking();
     void StopTracking();
 }

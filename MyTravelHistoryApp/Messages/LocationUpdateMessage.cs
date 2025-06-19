@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using MyTravelHistoryApp.Models;
 
 namespace MyTravelHistoryApp.Messages;
 
-public class LocationUpdateMessage : ValueChangedMessage<CustomLocation>
+public class LocationUpdateMessage : ValueChangedMessage<Location>
 {
-    public LocationUpdateMessage(CustomLocation location)
+    public LocationUpdateMessage(Location location)
         : base(location)
     {
     }

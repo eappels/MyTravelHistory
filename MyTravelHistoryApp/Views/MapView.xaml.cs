@@ -48,7 +48,7 @@ public partial class MapView : ContentPage
             {
                 if (MyMap != null && m.Value != null)
                 {
-                    MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(m.Value.Latitude, m.Value.Longitude), Distance.FromMeters(zoomLevel)));
+                    MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(m.Value, Distance.FromMeters(zoomLevel)));
                 }
             });
         }

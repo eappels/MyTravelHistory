@@ -1,0 +1,35 @@
+1. Track List & Details
+•	Add a page to list all saved tracks with date, duration, and distance.
+•	Allow users to tap a track to view its route on the map and see stats.
+2. Track Editing
+•	Enable users to delete, rename, or add notes to saved tracks.
+•	Allow merging or splitting tracks.
+3. Export & Import
+•	Add export to GPX/KML/CSV for sharing or backup.
+•	Support importing tracks from files.
+4. Statistics & Insights
+•	Show total distance, time, and average speed for each track.
+•	Provide summary statistics (e.g., total distance traveled this month).
+5. Photos & Waypoints
+•	Allow users to add photos or notes at specific locations along a track.
+•	Display waypoints/markers on the map.
+6. Map Enhancements
+•	Support different map styles (satellite, terrain, etc.).
+•	Show current speed, altitude, or heading.
+•	Animate the track playback.
+7. Background Tracking
+•	Implement background location tracking so routes are recorded even when the app is minimized (requires platform-specific permissions and handling).
+8. Cloud Sync & Backup
+•	Sync tracks to a cloud service (Azure, OneDrive, Google Drive).
+•	Enable cross-device sync and backup/restore.
+9. User Authentication
+•	Add user accounts (with Microsoft, Google, or custom auth) to keep tracks private and enable sync.
+10. Social & Sharing
+•	Allow sharing tracks with friends or on social media.
+•	Generate a shareable link or image of the map.
+11. Notifications & Reminders
+•	Notify users to start/stop tracking based on location or time.
+•	Remind users to save unsaved tracks.
+12. Settings & Customization
+•	Let users customize tracking intervals, map appearance, and units (km/mi).
+•	Add dark mode support.
