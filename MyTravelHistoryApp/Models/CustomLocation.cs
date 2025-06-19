@@ -7,7 +7,7 @@ public class CustomLocation
     public DateTime Timestamp { get; set; }
 
     public CustomLocation()
-    {        
+    {
     }
 
     public CustomLocation(double latitude, double longitude)
