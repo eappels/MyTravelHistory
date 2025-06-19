@@ -22,7 +22,7 @@ public partial class LocationService : IDisposable
         var lastLocation = e.Locations.LastOrDefault();
         if (lastLocation != null)
         {
-            OnLocationUpdate?.Invoke(new CustomLocation(
+            OnLocationUpdate?.Invoke(new Location(
                 lastLocation.Coordinate.Latitude,
                 lastLocation.Coordinate.Longitude
             ));

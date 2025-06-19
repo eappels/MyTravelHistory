@@ -5,7 +5,7 @@ namespace MyTravelHistoryApp.Services;
 
 public partial class LocationService : ILocationService
 {
-    public Action<CustomLocation> OnLocationUpdate { get; set; }
+    public Action<Location> OnLocationUpdate { get; set; }
 
     public void StartTracking()
     {
