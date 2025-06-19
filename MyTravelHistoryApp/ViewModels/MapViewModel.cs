@@ -12,16 +12,15 @@ public partial class MapViewModel : ObservableObject
 {
 
     private readonly ILocationService locationService;
-    private readonly IDBService dbService;
     private DateTime StartTrackingTime, StopTrackingTime;
 
-    public MapViewModel(ILocationService locationService, IDBService dbService)
+    public MapViewModel(ILocationService locationService)
     {
         StartStopButtonEnabed = true;
         StartStopButtonColor = "Green";
         this.locationService = locationService;        
         locationService.OnLocationUpdate = OnLocationUpdate;
-        this.dbService = dbService;
+
         StartStopButtonText = "Start";
         Track = new Polyline
         {
@@ -30,15 +29,14 @@ public partial class MapViewModel : ObservableObject
         };
     }
 
-    private async void OnLocationUpdate(CustomLocation location)
+    private void OnLocationUpdate(CustomLocation location)
     {
         Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
         WeakReferenceMessenger.Default.Send(new LocationUpdateMessage(location));
-        await dbService.Save(location);
     }
 
     [RelayCommand]
-    public async void StartStopRecording()
+    public async Task StartStopRecordingAsync()
     {
         StartStopButtonText = StartStopButtonText == "Start" ? "Stop" : "Start";
         if (StartStopButtonText == "Stop")
@@ -56,6 +54,10 @@ public partial class MapViewModel : ObservableObject
             if (result == true)
             {
 
+            }
+            else
+            {
+                Track.Geopath.Clear();
             }
             StartStopButtonColor = "Green";
             StartStopButtonEnabed = true;

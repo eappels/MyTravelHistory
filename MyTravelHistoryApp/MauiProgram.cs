@@ -25,7 +25,6 @@ namespace MyTravelHistoryApp
 #endif
 
             builder.Services.AddSingleton<ILocationService, LocationService>();
-            builder.Services.AddSingleton<IDBService, DBService>();
 
             builder.Services.AddSingleton<MapViewModel>();
             builder.Services.AddTransient<MapView>();
