@@ -5,25 +5,18 @@ namespace MyTravelHistoryApp.Services;
 
 public partial class LocationService : ILocationService
 {
-
     public Action<CustomLocation> OnLocationUpdate { get; set; }
 
-    //public void StartTracking()
-    //{
-    //    StartTrackingInternal();
-    //}
-
-    //public void StopTracking()
-    //{
-    //    StopTrackingInternal();
-    //}
-
-    //partial void StartTrackingInternal();
-    //partial void StopTrackingInternal();
-
-    public void ToggleStartStopTracking()
+    public void StartTracking()
     {
-        ToggleStartStopTrackingInternal();
+        StartTrackingInternal();
     }
-    partial void ToggleStartStopTrackingInternal();
+
+    public void StopTracking()
+    {
+        StopTrackingInternal();
+    }
+
+    partial void StartTrackingInternal();
+    partial void StopTrackingInternal();
 }

@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using MyTravelHistoryApp.Helpers;
+using MyTravelHistoryApp.Messages;
 using MyTravelHistoryApp.ViewModels;
 
 namespace MyTravelHistoryApp.Views;
@@ -8,24 +10,51 @@ namespace MyTravelHistoryApp.Views;
 public partial class MapView : ContentPage
 {
 
+    private readonly MapViewModel viewModel;
+    private double zoomLevel = 100;
+
 	public MapView(MapViewModel viewModel)
 	{
+        BindingContext = this.viewModel = viewModel;
         InitializeComponent();
+    }
 
-        BindingContext = viewModel;
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
 
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            var result = await AppPermissions.CheckAndRequestRequiredPermissionAsync();
-            if (result == PermissionStatus.Granted)
+        var result = await AppPermissions.CheckAndRequestRequiredPermissionAsync();
+		if (result == PermissionStatus.Granted)
+		{
+            viewModel.Track = new Polyline()
             {
-                MyMap.MapElements.Add(viewModel.Track);
+                StrokeColor = Colors.Blue,
+                StrokeWidth = 5
+            };
+            if (MyMap != null)
+            {
+                MyMap.MapElements.Add(((MapViewModel)(BindingContext)).Track);
+                MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(51.16597303515816, 3.8475330605909166), Distance.FromMeters(zoomLevel)));
+                MyMap.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == "VisibleRegion")
+                    {
+                        zoomLevel = MyMap.VisibleRegion.Radius.Meters;
+                    }
+                };
             }
-        });
 
-        WeakReferenceMessenger.Default.Register<Location>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<LocationUpdateMessage>(this, (r, m) =>
+            {
+                if (MyMap != null && m.Value != null)
+                {
+                    MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(m.Value.Latitude, m.Value.Longitude), Distance.FromMeters(zoomLevel)));
+                }
+            });
+        }
+        else
         {
-            MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(m.Latitude, m.Longitude), Distance.FromMeters(250)));
-        });
+            await DisplayAlert("Permission Denied", "This app requires location permissions to function properly.", "OK");
+        }
     }
 }

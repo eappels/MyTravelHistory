@@ -16,18 +16,10 @@ internal partial class AppPermissions
             return status;
 
         if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-                await Application.Current.MainPage.DisplayAlert(
-                    "Required App Permissions",
-                    "Please enable all permissions in Settings for this App, it is useless without them.",
-                    "Ok"));
+            await App.Current.MainPage.DisplayAlert("Required App Permissions", "Please enable all permissions in Settings for this App, it is useless without them.", "Ok");
 
-        if (Permissions.ShouldShowRationale<AppPermission>() && App.Current != null)
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-                await Application.Current.MainPage.DisplayAlert(
-                    "Required App Permissions",
-                    "This is a location based app, without these permissions it is useless.",
-                    "Ok"));
+        if (Permissions.ShouldShowRationale<AppPermission>())
+            await App.Current.MainPage.DisplayAlert("Required App Permissions", "This is a location based app, without these permissions it is useless.", "Ok");
 
         status = await MainThread.InvokeOnMainThreadAsync(Permissions.RequestAsync<AppPermission>);
         return status;

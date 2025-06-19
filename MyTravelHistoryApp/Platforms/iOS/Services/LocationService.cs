@@ -3,11 +3,9 @@ using MyTravelHistoryApp.Models;
 
 namespace MyTravelHistoryApp.Services;
 
-public partial class LocationService
+public partial class LocationService : IDisposable
 {
-
     public readonly CLLocationManager locationManager;
-    private bool isTracking = false;
 
     public LocationService()
     {
@@ -16,20 +14,35 @@ public partial class LocationService
         locationManager.DesiredAccuracy = CLLocation.AccuracyBestForNavigation;
         locationManager.AllowsBackgroundLocationUpdates = true;
         locationManager.ActivityType = CLActivityType.AutomotiveNavigation;
-        locationManager.LocationsUpdated += (object sender, CLLocationsUpdatedEventArgs e) =>
-            OnLocationUpdate?.Invoke(new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude));
+        locationManager.LocationsUpdated += OnLocationsUpdated;
     }
 
-    partial void ToggleStartStopTrackingInternal()
+    private void OnLocationsUpdated(object? sender, CLLocationsUpdatedEventArgs e)
     {
-        if (!isTracking)
+        var lastLocation = e.Locations.LastOrDefault();
+        if (lastLocation != null)
         {
-            locationManager.StartUpdatingLocation();            
+            OnLocationUpdate?.Invoke(new CustomLocation(
+                lastLocation.Coordinate.Latitude,
+                lastLocation.Coordinate.Longitude
+            ));
         }
-        else
-        {
-            locationManager.StopUpdatingLocation();
-        }
-        isTracking = !isTracking;
+    }
+
+    partial void StartTrackingInternal()
+    {
+        locationManager.StartUpdatingLocation();
+    }
+
+    partial void StopTrackingInternal()
+    {
+        locationManager.StopUpdatingLocation();
+    }
+
+    public void Dispose()
+    {
+        locationManager.LocationsUpdated -= OnLocationsUpdated;
+        locationManager.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
