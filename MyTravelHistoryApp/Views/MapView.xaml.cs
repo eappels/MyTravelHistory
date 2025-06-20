@@ -10,13 +10,13 @@ namespace MyTravelHistoryApp.Views;
 public partial class MapView : ContentPage
 {
 
-    private readonly MapViewModel viewModel;
     private double zoomLevel = 100;
 
 	public MapView(MapViewModel viewModel)
-	{
-        BindingContext = this.viewModel = viewModel;
+	{        
         InitializeComponent();
+
+        BindingContext = viewModel;
     }
 
     protected override async void OnAppearing()
@@ -26,7 +26,7 @@ public partial class MapView : ContentPage
         var result = await AppPermissions.CheckAndRequestRequiredPermissionAsync();
 		if (result == PermissionStatus.Granted)
 		{
-            viewModel.Track = new Polyline()
+            ((MapViewModel)BindingContext).Track = new Polyline()
             {
                 StrokeColor = Colors.Blue,
                 StrokeWidth = 5

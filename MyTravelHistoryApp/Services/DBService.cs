@@ -32,4 +32,18 @@ public class DBService : IDBService
         await Init();
         return await database.Table<CustomTrack>().OrderByDescending(t => t.Id).FirstOrDefaultAsync();
     }
+
+    public async Task<List<CustomTrack>> ListAllTracksAsync()
+    {
+        await Init();
+        return await database.Table<CustomTrack>().ToListAsync();
+    }
+
+    public async Task<int> DeleteTrackAsync(CustomTrack track)
+    {
+        await Init();
+        if (track == null)
+            return 0;
+        return await database.DeleteAsync(track);
+    }
 }

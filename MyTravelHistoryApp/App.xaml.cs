@@ -1,21 +1,15 @@
-﻿using MyTravelHistoryApp.Views;
+﻿namespace MyTravelHistoryApp;
 
-namespace MyTravelHistoryApp
+public partial class App : Application
 {
-    public partial class App : Application
+
+    public App()
     {
+        InitializeComponent();
+    }
 
-        private readonly MapView mapView;
-
-        public App(MapView mapView)
-        {
-            this.mapView = mapView;
-            InitializeComponent();
-        }
-
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new NavigationPage(mapView));
-        }
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
     }
 }
