@@ -13,34 +13,20 @@ public partial class MapViewModel : ObservableObject
 
     private readonly ILocationService locationService;
     private readonly IDBService dbService;
-    private DateTime StartTrackingTime, StopTrackingTime;
 
     public MapViewModel(ILocationService locationService, IDBService dbService)
     {
         StartStopButtonEnabed = true;
         StartStopButtonColor = "Green";
+        StartStopButtonText = "Start";
         this.locationService = locationService;        
         locationService.OnLocationUpdate = OnLocationUpdate;
-        this.dbService = dbService;
-
-        StartStopButtonText = "Start";
+        this.dbService = dbService;        
         Track = new Polyline
         {
             StrokeColor = Colors.Blue,
             StrokeWidth = 5
         };
-
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            CustomTrack lasttrack = await dbService.ReadLastTracksAsync();
-            if (lasttrack != null)
-            {
-                foreach (var location in lasttrack.Locations)
-                {
-                    Track.Geopath.Add(location);
-                }
-            }
-        });
     }
 
     private void OnLocationUpdate(Location location)
@@ -57,22 +43,28 @@ public partial class MapViewModel : ObservableObject
         {
             Track.Geopath.Clear();
             locationService.StartTracking();
-            StartTrackingTime = DateTime.Now;
             StartStopButtonColor = "Red";
         }
         else
         {
             locationService.StopTracking();
             StartStopButtonEnabed = false;
-            StopTrackingTime = DateTime.Now;
             var result = await Application.Current.MainPage.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
             if (result == true)
             {
-                foreach (var item in Track)
+                var track = new CustomTrack(Track.Geopath);
+                await dbService.SaveTrackAsync(track);
+                result = await App.Current.Windows[0].Page.DisplayAlert("Track saved", "Do you want to display the saved track?", "Yes", "No");
+                if (result == true)
                 {
-                    var track = new CustomTrack(Track.Geopath);
-                    await dbService.SaveTrackAsync(track);
+                    await Shell.Current.GoToAsync("///HistoryView");
                 }
+                else
+                {
+                    Track.Geopath.Clear();
+                    StartStopButtonColor = "Green";
+                    StartStopButtonEnabed = true;
+                }                
             }
             else
             {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
+             x:Class="MyTravelHistoryApp.Views.HistoryView"
+             Title="HistoryView">
+    <Grid RowDefinitions="*,120"
+          ColumnDefinitions="*,*">
+        <maps:Map x:Name="MyMap"
+            Grid.Row="0" Grid.RowSpan="2"
+            Grid.Column="0" Grid.ColumnSpan="2"/>
+        <Button Text="&lt;"
+            HeightRequest="50"
+            WidthRequest="50"
+            Grid.Row="1" Grid.RowSpan="1"
+            Grid.Column="0"
+            Command="{Binding PreviousTrackCommand}"/>
+        <Button Text=">"
+            HeightRequest="50"
+            WidthRequest="50"
+            Grid.Row="1" Grid.RowSpan="1"
+            Grid.Column="1"
+            Command="{Binding NextTrackCommand}"/>
+    </Grid>
+</ContentPage>
