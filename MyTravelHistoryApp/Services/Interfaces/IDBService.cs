@@ -8,5 +8,7 @@ public interface IDBService
     Task<int> DeleteTrackAsync(CustomTrack track);
     Task<CustomTrack> ReadLastTracksAsync();
     Task<List<CustomTrack>> ListAllTracksAsync();
+    Task<CustomTrack> ReadPreviousTracksAsync(int currentTrackIndex);
+    Task<CustomTrack> ReadNextTracksAsync(int currentTrackIndex);
     Task ClearDatabase();
 }

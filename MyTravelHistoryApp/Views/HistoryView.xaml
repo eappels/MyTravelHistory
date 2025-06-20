@@ -14,11 +14,12 @@
             WidthRequest="50"
             Grid.Row="1" Grid.RowSpan="1"
             Grid.Column="0"
-            Command="{Binding ClearDBCommand}"/>
+            Command="{Binding PreviousTrackCommand}"/>
         <Button Text=">"
             HeightRequest="50"
             WidthRequest="50"
             Grid.Row="1" Grid.RowSpan="1"
-            Grid.Column="1"/>
+            Grid.Column="1"
+            Command="{Binding NextTrackCommand}"/>
     </Grid>
 </ContentPage>

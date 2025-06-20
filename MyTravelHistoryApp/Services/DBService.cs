@@ -47,6 +47,22 @@ public class DBService : IDBService
         return await database.DeleteAsync(track);
     }
 
+    public async Task<CustomTrack> ReadPreviousTracksAsync(int currentTrackIndex)
+    {
+        await Init();
+        if (currentTrackIndex <= 0)
+            return null;
+        return await database.Table<CustomTrack>().Where(t => t.Id < currentTrackIndex).OrderByDescending(t => t.Id).FirstOrDefaultAsync();
+    }
+
+    public async Task<CustomTrack> ReadNextTracksAsync(int currentTrackIndex)
+    {
+        await Init();
+        if (currentTrackIndex <= 0)
+            return null;
+        return await database.Table<CustomTrack>().Where(t => t.Id > currentTrackIndex).OrderBy(t => t.Id).FirstOrDefaultAsync();
+    }
+
     public async Task ClearDatabase()
     {
         await database.DropTableAsync<CustomTrack>();
