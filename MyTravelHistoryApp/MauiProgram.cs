@@ -30,8 +30,8 @@ namespace MyTravelHistoryApp
             builder.Services.AddSingleton<MapViewModel>();
             builder.Services.AddTransient<MapView>();
 
-            builder.Services.AddSingleton<HistoryListViewModel>();
-            builder.Services.AddTransient<HistoryListView>();
+            builder.Services.AddSingleton<HistoryViewModel>();
+            builder.Services.AddTransient<HistoryView>();
 
             return builder.Build();
         }

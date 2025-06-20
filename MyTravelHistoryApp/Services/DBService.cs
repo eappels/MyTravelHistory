@@ -46,4 +46,10 @@ public class DBService : IDBService
             return 0;
         return await database.DeleteAsync(track);
     }
+
+    public async Task ClearDatabase()
+    {
+        await database.DropTableAsync<CustomTrack>();
+        await database.CreateTableAsync<CustomTrack>();
+    }
 }

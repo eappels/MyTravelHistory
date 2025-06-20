@@ -5,6 +5,7 @@ using Microsoft.Maui.Controls.Maps;
 using MyTravelHistoryApp.Messages;
 using MyTravelHistoryApp.Models;
 using MyTravelHistoryApp.Services.Interfaces;
+using MyTravelHistoryApp.Views;
 
 namespace MyTravelHistoryApp.ViewModels;
 
@@ -19,28 +20,15 @@ public partial class MapViewModel : ObservableObject
     {
         StartStopButtonEnabed = true;
         StartStopButtonColor = "Green";
+        StartStopButtonText = "Start";
         this.locationService = locationService;        
         locationService.OnLocationUpdate = OnLocationUpdate;
-        this.dbService = dbService;
-
-        StartStopButtonText = "Start";
+        this.dbService = dbService;        
         Track = new Polyline
         {
             StrokeColor = Colors.Blue,
             StrokeWidth = 5
         };
-
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            CustomTrack lasttrack = await dbService.ReadLastTracksAsync();
-            if (lasttrack != null)
-            {
-                foreach (var location in lasttrack.Locations)
-                {
-                    Track.Geopath.Add(location);
-                }
-            }
-        });
     }
 
     private void OnLocationUpdate(Location location)
@@ -68,16 +56,19 @@ public partial class MapViewModel : ObservableObject
             var result = await Application.Current.MainPage.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
             if (result == true)
             {
-                foreach (var item in Track)
+                var track = new CustomTrack(Track.Geopath);
+                await dbService.SaveTrackAsync(track);
+                result = await App.Current.Windows[0].Page.DisplayAlert("Track saved", "Do you want to display the saved track?", "Yes", "No");
+                if (result == true)
                 {
-                    var track = new CustomTrack(Track.Geopath);
-                    await dbService.SaveTrackAsync(track);
-                    result = await Application.Current.MainPage.DisplayAlert("Track saved", "Do you want to display the saved track?", "Yes", "No");
-                    if (result == true)
-                    {
-
-                    }
+                    await Shell.Current.GoToAsync("///HistoryView");
                 }
+                else
+                {
+                    Track.Geopath.Clear();
+                    StartStopButtonColor = "Green";
+                    StartStopButtonEnabed = true;
+                }                
             }
             else
             {
