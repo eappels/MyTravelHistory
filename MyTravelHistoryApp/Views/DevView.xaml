@@ -3,12 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyTravelHistoryApp.Views.DevView"
              Title="DevView">
-    <Grid
-        RowDefinitions="10,50,5,*,10">
+    <VerticalStackLayout>
         <Button Text="Reset database"
                 Command="{Binding ResetDatabaseCommand}"
-                HeightRequest="50"
-                Margin="10"
-                Grid.Row="1"/>
-    </Grid>
+                HeightRequest="50"/>
+        <Label Text="locationManager PausesLocationUpdatesAutomatically"
+                HeightRequest="50"/>
+        <Switch IsToggled="{Binding PausesLocationUpdatesAutomaticallyIsToggled}"                
+                HeightRequest="50"/>
+    </VerticalStackLayout>
 </ContentPage>
