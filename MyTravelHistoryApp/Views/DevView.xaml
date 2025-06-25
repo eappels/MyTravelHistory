@@ -5,11 +5,10 @@
              Title="DevView">
     <VerticalStackLayout>
         <Button Text="Reset database"
-                Command="{Binding ResetDatabaseCommand}"
-                HeightRequest="50"/>
-        <Label Text="locationManager PausesLocationUpdatesAutomatically"
-                HeightRequest="50"/>
-        <Switch IsToggled="{Binding PausesLocationUpdatesAutomaticallyIsToggled}"                
-                HeightRequest="50"/>
+            Command="{Binding ResetDatabaseCommand}"
+            HeightRequest="50"/>
+        <Button Text="Export tracks"
+            Command="{Binding ExportDBCommand}"
+            HeightRequest="50"/>
     </VerticalStackLayout>
 </ContentPage>

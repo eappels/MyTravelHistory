@@ -30,41 +30,41 @@ public partial class HistoryView : ContentPage
             var viewModel = (HistoryViewModel)BindingContext;
 
             // Example: Load the last track from the database
-            var lastTrack = await viewModel.dbService.ReadLastTracksAsync();
-            if (lastTrack != null && lastTrack.Locations != null && lastTrack.Locations.Count > 0)
-            {
-                var polyline = new Polyline
-                {
-                    StrokeColor = Colors.Blue,
-                    StrokeWidth = 5
-                };
+            //var lastTrack = await viewModel.dbService.ReadLastTracksAsync();
+            //if (lastTrack != null && lastTrack.Locations != null && lastTrack.Locations.Count > 0)
+            //{
+            //    var polyline = new Polyline
+            //    {
+            //        StrokeColor = Colors.Blue,
+            //        StrokeWidth = 5
+            //    };
 
-                foreach (var coord in lastTrack.Locations)
-                {
-                    polyline.Geopath.Add(new Location(coord.Latitude, coord.Longitude));
-                }
+            //    foreach (var coord in lastTrack.Locations)
+            //    {
+            //        polyline.Geopath.Add(new Location(coord.Latitude, coord.Longitude));
+            //    }
 
-                viewModel.Track = polyline;
-                if (MyMap != null)
-                {
-                    MyMap.MapElements.Clear();
-                    MyMap.MapElements.Add(polyline);
+            //    viewModel.Track = polyline;
+            //    if (MyMap != null)
+            //    {
+            //        MyMap.MapElements.Clear();
+            //        MyMap.MapElements.Add(polyline);
 
-                    // Calculate bounding region for the track
-                    var minLat = lastTrack.Locations.Min(c => c.Latitude);
-                    var maxLat = lastTrack.Locations.Max(c => c.Latitude);
-                    var minLon = lastTrack.Locations.Min(c => c.Longitude);
-                    var maxLon = lastTrack.Locations.Max(c => c.Longitude);
+            //        // Calculate bounding region for the track
+            //        var minLat = lastTrack.Locations.Min(c => c.Latitude);
+            //        var maxLat = lastTrack.Locations.Max(c => c.Latitude);
+            //        var minLon = lastTrack.Locations.Min(c => c.Longitude);
+            //        var maxLon = lastTrack.Locations.Max(c => c.Longitude);
 
-                    var centerLat = (minLat + maxLat) / 2;
-                    var centerLon = (minLon + maxLon) / 2;
-                    var distance = Location.CalculateDistance(minLat, minLon, maxLat, maxLon, DistanceUnits.Kilometers);
+            //        var centerLat = (minLat + maxLat) / 2;
+            //        var centerLon = (minLon + maxLon) / 2;
+            //        var distance = Location.CalculateDistance(minLat, minLon, maxLat, maxLon, DistanceUnits.Kilometers);
 
-                    MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(
-                        new Location(centerLat, centerLon),
-                        Distance.FromKilometers(Math.Max(distance, 0.5)))); // Ensure a minimum zoom
-                }
-            }
+            //        MyMap.MoveToRegion(MapSpan.FromCenterAndRadius(
+            //            new Location(centerLat, centerLon),
+            //            Distance.FromKilometers(Math.Max(distance, 0.5)))); // Ensure a minimum zoom
+            //    }
+            //}
 
             MyMap.PropertyChanged += (s, e) =>
             {

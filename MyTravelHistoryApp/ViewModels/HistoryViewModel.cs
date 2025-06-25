@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Maps;
+using MyTravelHistoryApp.Models;
 using MyTravelHistoryApp.Services.Interfaces;
 using System.Diagnostics;
 
@@ -10,68 +11,74 @@ public partial class HistoryViewModel : ObservableObject
 {
 
     public readonly IDBService dbService;
-    private int CurrentTrackIndex = 0;
 
     public HistoryViewModel(IDBService dbService)
     {
         this.dbService = dbService;
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            var customTrack = await dbService.ReadLastTracksAsync();
-            CurrentTrackIndex = customTrack?.Id ?? 0;
-            if (customTrack != null) {
-                Track = new Polyline
-                {
-                    StrokeColor = Colors.Blue,
-                    StrokeWidth = 5
-                };
-                foreach (var location in customTrack.Locations)
-                {
-                    Track.Geopath.Add(location);
-                }
-            }
-        });
-        Debug.WriteLine($"CurrentTrackIndex: {CurrentTrackIndex}");
+        //MainThread.BeginInvokeOnMainThread(async () =>
+        //{
+        //    var lastTrackid = -1;
+        //    try
+        //    {
+        //         lastTrackid = await dbService.ReadLastTracksIdAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine($"Error reading last track ID: {ex.Message}");
+        //        throw;
+        //    }
+            
+        //    await LoadTrackById(lastTrackid);
+        //});
+    }
+
+    private async Task LoadTrackById(int id)
+    {
+        //Track.Clear();
+        //var customTrack = new CustomTrack();
+
+        //try
+        //{
+        //    customTrack = await dbService.ReadTrackByIdAsync(id);
+        //}
+        //catch (Exception ex)
+        //{
+        //    Debug.WriteLine($"Error reading last track: {ex.Message}");
+        //    throw new Exception();
+        //}
+
+        //if (customTrack != null)
+        //{            
+        //    Track = new Polyline
+        //    {
+        //        StrokeColor = Colors.Blue,
+        //        StrokeWidth = 5
+        //    };
+        //    foreach (var location in customTrack.Locations)
+        //    {
+        //        Track.Geopath.Add(location);
+        //    }
+        //}
+        await Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    private async Task PreviousTrack()
+    {
+        CurrentTrackIndex--;       
+        await LoadTrackById(CurrentTrackIndex);
+    }
+
+    [RelayCommand]
+    private async Task NextTrack()
+    {
+        CurrentTrackIndex++;
+        await LoadTrackById(CurrentTrackIndex);
     }
 
     [ObservableProperty]
     private Polyline track;
 
-    [RelayCommand]
-    private void PreviousTrack()
-    {
-        Track.Clear();
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            var customTrack = await dbService.ReadPreviousTracksAsync(CurrentTrackIndex);
-            if (customTrack != null)
-            {
-                CurrentTrackIndex = customTrack?.Id ?? 0;
-                foreach (var location in customTrack.Locations)
-                {
-                    Track.Geopath.Add(location);
-                }
-            }
-        });
-        Debug.WriteLine($"CurrentTrackIndex: {CurrentTrackIndex}");
-    }
-
-    [RelayCommand]
-    private void NextTrack()
-    {
-        Track.Clear();
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            var customTrack = await dbService.ReadNextTracksAsync(CurrentTrackIndex);
-            if (customTrack != null)
-            {
-                CurrentTrackIndex = customTrack?.Id ?? 0;
-                foreach (var location in customTrack.Locations)
-                {
-                    Track.Geopath.Add(location);
-                }
-            }
-        });
-        Debug.WriteLine($"CurrentTrackIndex: {CurrentTrackIndex}");
-    }
+    [ObservableProperty]
+    private int currentTrackIndex;
 }

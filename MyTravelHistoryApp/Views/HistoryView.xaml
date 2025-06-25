@@ -9,6 +9,12 @@
         <maps:Map x:Name="MyMap"
             Grid.Row="0" Grid.RowSpan="2"
             Grid.Column="0" Grid.ColumnSpan="2"/>
+        <Label Text="{Binding CurrentTrackIndex}"
+            FontSize="24"
+            VerticalOptions="Start"
+            HorizontalOptions="Center"
+            Grid.Row="0" Grid.RowSpan="2"
+            Grid.Column="0" Grid.ColumnSpan="2"/>
         <Button Text="&lt;"
             HeightRequest="50"
             WidthRequest="50"

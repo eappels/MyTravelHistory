@@ -27,40 +27,9 @@ public class DBService : IDBService
         return await database.InsertAsync(track);
     }
 
-    public async Task<CustomTrack> ReadLastTracksAsync()
+    public string ExportDB()
     {
-        await Init();
-        return await database.Table<CustomTrack>().OrderByDescending(t => t.Id).FirstOrDefaultAsync();
-    }
-
-    public async Task<List<CustomTrack>> ListAllTracksAsync()
-    {
-        await Init();
-        return await database.Table<CustomTrack>().ToListAsync();
-    }
-
-    public async Task<int> DeleteTrackAsync(CustomTrack track)
-    {
-        await Init();
-        if (track == null)
-            return 0;
-        return await database.DeleteAsync(track);
-    }
-
-    public async Task<CustomTrack> ReadPreviousTracksAsync(int currentTrackIndex)
-    {
-        await Init();
-        if (currentTrackIndex <= 0)
-            return null;
-        return await database.Table<CustomTrack>().Where(t => t.Id < currentTrackIndex).OrderByDescending(t => t.Id).FirstOrDefaultAsync();
-    }
-
-    public async Task<CustomTrack> ReadNextTracksAsync(int currentTrackIndex)
-    {
-        await Init();
-        if (currentTrackIndex <= 0)
-            return null;
-        return await database.Table<CustomTrack>().Where(t => t.Id > currentTrackIndex).OrderBy(t => t.Id).FirstOrDefaultAsync();
+        return Constants.DatabasePath;
     }
 
     public async Task ClearDatabase()

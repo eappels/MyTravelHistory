@@ -49,12 +49,13 @@ public partial class MapViewModel : ObservableObject
         {
             locationService.StopTracking();
             StartStopButtonEnabed = false;
-            var result = await Application.Current.MainPage.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
+            var result = await App.Current.Windows[0].Page.DisplayAlert("Save Track", "Do you want to save the current track?", "Yes", "No");
             if (result == true)
             {
                 var track = new CustomTrack(Track.Geopath);
                 await dbService.SaveTrackAsync(track);
-                result = await App.Current.Windows[0].Page.DisplayAlert("Track saved", "Do you want to display the saved track?", "Yes", "No");
+                //result = await App.Current.Windows[0].Page.DisplayAlert("Track saved", "Do you want to display the saved track?", "Yes", "No");
+                result = false;
                 if (result == true)
                 {
                     await Shell.Current.GoToAsync("///HistoryView");
