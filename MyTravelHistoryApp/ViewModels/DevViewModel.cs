@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyTravelHistoryApp.Services.Interfaces;
+using System.Diagnostics;
 
 namespace MyTravelHistoryApp.ViewModels;
 
@@ -21,14 +22,9 @@ public partial class DevViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ExportTracksCommand()
-    {
-        ExportPath = dbService.ExportDB();
-    }
-
-    [RelayCommand]
     private async Task ExportDB()
     {
+        ExportPath = await dbService.ExportDB();
         await Share.Default.RequestAsync(new ShareFileRequest
         {
             Title = "Database",

@@ -9,8 +9,9 @@ public class DBService : IDBService
 {
 
     private SQLiteAsyncConnection database;
+    private int CurrentIndex = 0;
 
-    async Task Init()
+    private async Task Init()
     {
         if (database is not null)
             return;
@@ -24,12 +25,31 @@ public class DBService : IDBService
         await Init();
         if (track == null || track.Locations == null || track.Locations.Count == 0)
             return 0;
-        return await database.InsertAsync(track);
+        CurrentIndex = await database.InsertAsync(track);
+        return CurrentIndex;
     }
 
-    public string ExportDB()
+    public async Task<string> ExportDB()
     {
+        await Init();
+        await database.CloseAsync();
         return Constants.DatabasePath;
+    }
+
+    public async Task<CustomTrack> GetLastTrack()
+    {
+        await Init();
+        return await database.Table<CustomTrack>()
+            .OrderByDescending(t => t.Id)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<CustomTrack> GetTrackByID(int id)
+    {
+        await Init();
+        return await database.Table<CustomTrack>()
+            .Where(t => t.Id == id)
+            .FirstOrDefaultAsync();
     }
 
     public async Task ClearDatabase()

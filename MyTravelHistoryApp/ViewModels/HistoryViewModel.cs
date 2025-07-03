@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Maps;
 using MyTravelHistoryApp.Models;
 using MyTravelHistoryApp.Services.Interfaces;
-using System.Diagnostics;
 
 namespace MyTravelHistoryApp.ViewModels;
 
@@ -15,65 +14,51 @@ public partial class HistoryViewModel : ObservableObject
     public HistoryViewModel(IDBService dbService)
     {
         this.dbService = dbService;
-        //MainThread.BeginInvokeOnMainThread(async () =>
-        //{
-        //    var lastTrackid = -1;
-        //    try
-        //    {
-        //         lastTrackid = await dbService.ReadLastTracksIdAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine($"Error reading last track ID: {ex.Message}");
-        //        throw;
-        //    }
-            
-        //    await LoadTrackById(lastTrackid);
-        //});
-    }
-
-    private async Task LoadTrackById(int id)
-    {
-        //Track.Clear();
-        //var customTrack = new CustomTrack();
-
-        //try
-        //{
-        //    customTrack = await dbService.ReadTrackByIdAsync(id);
-        //}
-        //catch (Exception ex)
-        //{
-        //    Debug.WriteLine($"Error reading last track: {ex.Message}");
-        //    throw new Exception();
-        //}
-
-        //if (customTrack != null)
-        //{            
-        //    Track = new Polyline
-        //    {
-        //        StrokeColor = Colors.Blue,
-        //        StrokeWidth = 5
-        //    };
-        //    foreach (var location in customTrack.Locations)
-        //    {
-        //        Track.Geopath.Add(location);
-        //    }
-        //}
-        await Task.CompletedTask;
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            CustomTrack track = await dbService.GetLastTrack();
+            CurrentTrackIndex = track?.Id ?? 0;
+            if (track != null && track.Locations != null && track.Locations.Count > 0)
+            {
+                Track = new Polyline
+                {
+                    StrokeColor = Colors.Blue,
+                    StrokeWidth = 5
+                };
+                foreach (var location in track.Locations)
+                {
+                    Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+                }
+            }
+        });
     }
 
     [RelayCommand]
     private async Task PreviousTrack()
     {
-        CurrentTrackIndex--;       
-        await LoadTrackById(CurrentTrackIndex);
+        Track.Geopath.Clear();
+        CustomTrack track = await dbService.GetTrackByID(CurrentTrackIndex - 1);
+        if (track != null && track.Locations != null && track.Locations.Count > 0)
+        {
+            foreach (var location in track.Locations)
+            {
+                Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+            }
+        }
     }
 
     [RelayCommand]
     private async Task NextTrack()
     {
-        CurrentTrackIndex++;
-        await LoadTrackById(CurrentTrackIndex);
+        Track.Geopath.Clear();
+        CustomTrack track = await dbService.GetTrackByID(CurrentTrackIndex + 1);
+        if (track != null && track.Locations != null && track.Locations.Count > 0)
+        {
+            foreach (var location in track.Locations)
+            {
+                Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+            }
+        }
     }
 
     [ObservableProperty]
